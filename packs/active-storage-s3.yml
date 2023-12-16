@@ -9,7 +9,7 @@ dependencies: [
   { type: runtime, package_name: vips }
 ]
 service_requirements: [
-  { condition: one_of, service_name: aws-s3 }
+  { condition: one_of, service_name: aws-s3-bucket }
 ]
 section:
 - name: kit
