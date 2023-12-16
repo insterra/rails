@@ -2,42 +2,25 @@ name: base-rails
 type: template
 description: Base pack for ruby on rails
 frameworks: [rails]
-dependencies:
-- type: build
-  package_name: ruby
-- type: build
-  package_name: ruby-bundler
-- type: build
-  package_name: ruby-dev
-- type: build
-  package_name: ruby-tzinfo
-- type: build
-  package_name: yaml-dev
-- type: build
-  package_name: libpq-dev
-- type: runtime
-  package_name: bash
-- type: runtime
-  package_name: curl
-- type: runtime
-  package_name: jq
-- type: runtime
-  package_name: ca-certificates
-- type: runtime
-  package_name: s6
-- type: runtime
-  main: true
-  package_name: ruby
-- type: runtime
-  package_name: ruby-bundler
-- type: runtime
-  package_name: ruby-tzinfo
-- type: runtime
-  package_name: ruby-rdoc
-- type: runtime
-  package_name: libpq
+visibility: public
+dependencies: [
+  { type: build, package_name: ruby },
+  { type: build, package_name: ruby-bundler },
+  { type: build, package_name: ruby-dev },
+  { type: build, package_name: ruby-tzinfo },
+  { type: build, package_name: yaml-dev },
+  { type: runtime, package_name: bash },
+  { type: runtime, package_name: curl },
+  { type: runtime, package_name: jq },
+  { type: runtime, package_name: ca-certificates },
+  { type: runtime, package_name: s6 },
+  { type: runtime, main: true, package_name: ruby },
+  { type: runtime, package_name: ruby-bundler },
+  { type: runtime, package_name: ruby-tzinfo },
+  { type: runtime, package_name: ruby-rdoc }
+]
 sections:
-- name: :build
+- name: build
   description: |
     We set the build destinations, this tells the system what to copy to the package.
 
@@ -54,7 +37,7 @@ sections:
       bundle install
 
       bundle exec rails assets:precompile
-- name: :run,
+- name: run,
   description: |
     This section tells the build configuration how your application is run.
 
@@ -63,16 +46,15 @@ sections:
     When the migrate command is run it will execute `rails db:migrate` and when the service starts it will call `rails server`
   attributes:
     name: "{{name}}"
-    commands:
-    - name: "migrate"
-      binary: "rails"
-      call: "db:migrate"
-    services:
-    - name: "web"
-      binary: "rails"
-      start:
-        call: "server"
-- name: :hook,
+    commands: [
+      { name: migrate, binary: rails, call: db:migrate },
+      { name: console, binary: rails, call: console },
+      { name: logs, binary: tail, path: /usr/bin, call: "-f -n 100 /var/log/{{name}}/current" }
+    ]
+    services: [
+      { name: web, binary: rails, start: { call: server }}
+    ]
+- name: hook,
   description: |
     Hooks are commands that run at different stage of the package lifecycle.
 
@@ -89,7 +71,7 @@ sections:
     post-deinstall: |
       rc-service {{name}} stop
       rc-update del {{name}}
-- name: :kit,
+- name: kit,
   description: |
     Web service kit will enable service on port 3000 and provision the database automatically for your application.
 

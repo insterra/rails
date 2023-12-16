@@ -1,0 +1,24 @@
+name: good-job
+type: extension
+parent_name: base-rails
+description: GoodJob extension for base-rails pack
+frameworks: [good_job]
+visibility: public
+require_extension_names: [postgresql]
+sections:
+- name: run
+  description: Add good-job to list of services.
+  attributes: 
+    services: [
+      { name: good-job, binary: bundle, start: { call: "exec good_job start" } }
+    ]
+- name: kit
+  description: The good-job `SERVICE_MODE` variable will start the good-job service configured in the run section. Use the fork kit to create an installation for the good_job workers.
+  attributes: 
+    name: web
+    forks:
+    - name: good-job
+      descrption: GoodJob worker
+      variables: [
+        { key: SERVICE_MODE, default_value: good-job }
+      ]

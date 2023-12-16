@@ -1,0 +1,48 @@
+name: active-storage-s3
+type: extension
+parent_name: base-rails
+description: Enable ActiveStorage configuration for base-rails
+frameworks: [image_processing, aws-sdk-s3]
+visibility: public
+dependencies: [
+  { type: build, package_name: vips-dev },
+  { type: runtime, package_name: vips }
+]
+service_requirements: [
+  { condition: one_of, service_name: aws-s3 }
+]
+section:
+- name: kit
+  description: |
+    The `bucket/aws-s3` driver enables s3 bucket generation and exposes the following:
+
+    - AWS_S3_ACCESS_KEY_ID
+    - AWS_S3_SECRET_ACCESS_KEY
+    - AWS_S3_REGION
+    - AWS_S3_BUCKET
+    - AWS_S3_ENDPOINT
+
+    You can use these env variables in your application configuration.
+  attributes: 
+    name: web
+    variables:
+    - key: AWS_S3
+      driver: "bucket/aws-s3"
+      driver_options: 
+        cors: |
+          [
+            {
+              "AllowedHeaders": [
+                "Content-Type",
+                "Content-MD5",
+                "Content-Disposition"
+              ],
+              "AllowedMethods": [
+                "PUT"
+              ],
+              "AllowedOrigins": [
+                {{- installation.origins -}}
+              ],
+              "MaxAgeSeconds": 3600
+            }
+          ]

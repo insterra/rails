@@ -1,0 +1,27 @@
+name: postgresql
+type: extension
+parent_name: base-rails
+description: Postgresql extension for base-rails pack
+frameworks: [pg]
+visibility: public
+dependencies: [
+  { type: build, package_name: libpq-dev },
+  { type: runtime, package_name: libpq }
+]
+service_requirements: [
+  { condition: must, service_name: postgresql }
+]
+sections: 
+- name: kit
+  description: |
+    The `database/postgresql` driver exposes the following:
+
+    - DATABASE_URL
+
+    You can access these as env variables in your application.
+  attributes: 
+    name: web
+    variables: [
+      { key: "DATABASE", driver: "database/postgresql" }
+    ]
+
