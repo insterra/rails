@@ -37,7 +37,7 @@ sections:
       bundle install
 
       bundle exec rails assets:precompile
-- name: run,
+- name: run
   description: |
     This section tells the build configuration how your application is run.
 
@@ -54,7 +54,7 @@ sections:
     services: [
       { name: web, binary: rails, start: { call: server }}
     ]
-- name: hook,
+- name: hook
   description: |
     Hooks are commands that run at different stage of the package lifecycle.
 
@@ -71,7 +71,7 @@ sections:
     post-deinstall: |
       rc-service {{name}} stop
       rc-update del {{name}}
-- name: kit,
+- name: kit
   description: |
     Web service kit will enable service on port 3000 and provision the database automatically for your application.
 
