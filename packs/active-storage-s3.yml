@@ -11,7 +11,7 @@ dependencies: [
 service_requirements: [
   { condition: one_of, service_name: aws-s3-bucket }
 ]
-section:
+sections:
 - name: kit
   description: |
     The `bucket/aws-s3` driver enables s3 bucket generation and exposes the following:
